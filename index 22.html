@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Tug Of Math Battle</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+
+/* ================= GLOBAL ================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Fredoka', sans-serif;
+}
+
+body{
+    overflow:hidden;
+    min-height:100vh;
+
+    background:
+    linear-gradient(
+        135deg,
+        #ff0080,
+        #7928ca,
+        #00c6ff,
+        #00ff88
+    );
+
+    background-size:400% 400%;
+
+    animation:bgMove 12s ease infinite;
+
+    color:white;
+}
+
+@keyframes bgMove{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+/* Glow Background */
+
+body::before,
+body::after{
+    content:"";
+    position:absolute;
+    width:450px;
+    height:450px;
+    border-radius:50%;
+    filter:blur(120px);
+    z-index:-1;
+}
+
+body::before{
+    background:#ff00c8;
+    top:-100px;
+    left:-100px;
+}
+
+body::after{
+    background:#00e5ff;
+    bottom:-100px;
+    right:-100px;
+}
+
+/* ================= SCREEN ================= */
+
+.screen{
+    width:100%;
+    height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:20px;
+}
+
+/* ================= START CARD ================= */
+
+.card{
+
+    width:90%;
+    max-width:520px;
+
+    padding:40px;
+
+    border-radius:35px;
+
+    background:rgba(255,255,255,0.12);
+
+    backdrop-filter:blur(18px);
+
+    border:2px solid rgba(255,255,255,0.2);
+
+    text-align:center;
+
+    box-shadow:
+    0 0 35px rgba(255,255,255,0.2);
+}
+
+/* ================= TITLE ================= */
+
+h1{
+    font-size:3.5rem;
+
+    margin-bottom:25px;
+
+    background:
+    linear-gradient(
+        to right,
+        #fff700,
+        #ff00ea,
+        #00f7ff
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+/* ================= INPUTS ================= */
+
+input,
+select{
+
+    width:100%;
+
+    padding:18px;
+
+    margin:15px 0;
+
+    border:none;
+
+    border-radius:18px;
+
+    font-size:1rem;
+
+    background:rgba(255,255,255,0.2);
+
+    color:white;
+
+    transition:0.3s;
+}
+
+input::placeholder{
+    color:white;
+}
+
+input:focus,
+select:focus{
+
+    outline:none;
+
+    transform:scale(1.03);
+
+    box-shadow:
+    0 0 20px white,
+    0 0 35px #00e5ff;
+}
+
+/* ================= BUTTON ================= */
+
+button{
+
+    padding:18px 35px;
+
+    border:none;
+
+    border-radius:18px;
+
+    font-size:1.1rem;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        45deg,
+        #ff512f,
+        #dd2476,
+        #6a11cb,
+        #2575fc
+    );
+
+    background-size:300% 300%;
+
+    animation:buttonMove 5s infinite;
+
+    transition:0.3s;
+}
+
+button:hover{
+
+    transform:scale(1.08);
+
+    box-shadow:
+    0 0 20px white,
+    0 0 40px #ff00ea;
+}
+
+@keyframes buttonMove{
+
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+/* ================= GAME SCREEN ================= */
+
+#gameScreen{
+    display:none;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:20px;
+}
+
+/* ================= HUD ================= */
+
+.topHUD{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+}
+
+.playerCard{
+
+    width:240px;
+
+    padding:18px;
+
+    border-radius:25px;
+
+    text-align:center;
+
+    font-size:1.3rem;
+
+    font-weight:bold;
+
+    animation:floatCard 2s infinite alternate;
+}
+
+@keyframes floatCard{
+
+    from{
+        transform:translateY(0px);
+    }
+
+    to{
+        transform:translateY(-8px);
+    }
+}
+
+.p1{
+    background:
+    linear-gradient(
+        135deg,
+        #00c6ff,
+        #0072ff
+    );
+}
+
+.p2{
+    background:
+    linear-gradient(
+        135deg,
+        #ff416c,
+        #ff4b2b
+    );
+}
+
+/* ================= TIMER ================= */
+
+.timer{
+
+    font-size:2.2rem;
+
+    background:
+    linear-gradient(
+        135deg,
+        #fff700,
+        #ff8800
+    );
+
+    color:black;
+
+    padding:18px 30px;
+
+    border-radius:20px;
+
+    font-weight:bold;
+
+    animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+
+    0%{transform:scale(1);}
+    50%{transform:scale(1.08);}
+    100%{transform:scale(1);}
+}
+
+/* ================= ARENA ================= */
+
+.arena{
+
+    width:100%;
+
+    height:330px;
+
+    position:relative;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+}
+
+/* Crowd */
+
+.crowd{
+
+    position:absolute;
+
+    bottom:0;
+
+    width:100%;
+
+    height:90px;
+
+    background:
+    repeating-linear-gradient(
+        90deg,
+        #111 0px,
+        #111 20px,
+        #444 20px,
+        #444 40px
+    );
+
+    animation:crowdMove 0.6s infinite alternate;
+}
+
+@keyframes crowdMove{
+
+    from{
+        transform:translateY(0px);
+    }
+
+    to{
+        transform:translateY(8px);
+    }
+}
+
+/* ================= ROPE ================= */
+
+.ropeContainer{
+
+    position:relative;
+
+    width:80%;
+
+    height:18px;
+
+    border-radius:20px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #7f5539,
+        #ddb892,
+        #7f5539
+    );
+}
+
+.rope{
+
+    position:absolute;
+
+    width:100%;
+    height:100%;
+
+    background:
+    repeating-linear-gradient(
+        45deg,
+        #6f4518 0px,
+        #6f4518 10px,
+        #bc8a5f 10px,
+        #bc8a5f 20px
+    );
+}
+
+/* ================= FLAG ================= */
+
+.flag{
+
+    position:absolute;
+
+    width:35px;
+    height:70px;
+
+    left:50%;
+    top:-30px;
+
+    transform:translateX(-50%);
+
+    border-radius:5px;
+
+    background:
+    linear-gradient(
+        180deg,
+        #fff700,
+        #ff9900
+    );
+
+    box-shadow:
+    0 0 20px #fff700;
+
+    transition:0.5s ease;
+}
+
+/* ================= CHARACTERS ================= */
+
+.character{
+
+    position:absolute;
+
+    bottom:80px;
+
+    font-size:5rem;
+
+    animation:bounce 1s infinite alternate;
+}
+
+.leftChar{
+    left:4%;
+}
+
+.rightChar{
+    right:4%;
+}
+
+@keyframes bounce{
+
+    from{
+        transform:translateY(0px);
+    }
+
+    to{
+        transform:translateY(-10px);
+    }
+}
+
+/* ================= MATH BOX ================= */
+
+.mathBox{
+
+    width:95%;
+    max-width:750px;
+
+    padding:35px;
+
+    border-radius:35px;
+
+    background:rgba(255,255,255,0.15);
+
+    backdrop-filter:blur(15px);
+
+    text-align:center;
+}
+
+/* ================= QUESTION ================= */
+
+.question{
+
+    font-size:3rem;
+
+    margin-bottom:25px;
+
+    font-weight:bold;
+
+    text-shadow:
+    0 0 10px white,
+    0 0 20px #00f7ff;
+}
+
+/* ================= ANSWERS ================= */
+
+.answerArea{
+
+    display:flex;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+
+    justify-content:center;
+}
+
+.answerArea div{
+
+    flex:1;
+
+    min-width:250px;
+}
+
+/* ================= WINNER POPUP ================= */
+
+#winnerPopup{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,0.8);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:999;
+}
+
+.popupCard{
+
+    width:90%;
+    max-width:500px;
+
+    padding:50px;
+
+    border-radius:35px;
+
+    text-align:center;
+
+    background:
+    linear-gradient(
+        135deg,
+        #ff00cc,
+        #3333ff,
+        #00ffee
+    );
+
+    animation:popupAnim 0.5s ease;
+}
+
+@keyframes popupAnim{
+
+    from{
+        transform:scale(0);
+    }
+
+    to{
+        transform:scale(1);
+    }
+}
+
+.winText{
+
+    font-size:3rem;
+
+    margin-bottom:20px;
+}
+
+/* ================= CONFETTI ================= */
+
+.confetti{
+
+    position:absolute;
+
+    width:12px;
+    height:12px;
+
+    border-radius:50%;
+
+    animation:fall linear forwards;
+}
+
+@keyframes fall{
+
+    to{
+        transform:
+        translateY(110vh)
+        rotate(720deg);
+
+        opacity:0;
+    }
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:768px){
+
+    h1{
+        font-size:2.3rem;
+    }
+
+    .topHUD{
+        flex-direction:column;
+        gap:15px;
+    }
+
+    .playerCard{
+        width:100%;
+    }
+
+    .question{
+        font-size:2rem;
+    }
+
+    .character{
+        font-size:3.5rem;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= START SCREEN ================= -->
+
+<div class="screen" id="startScreen">
+
+    <div class="card">
+
+        <h1>🪢 Tug Of Math ⚔️</h1>
+
+        <input type="text" id="p1Name" placeholder="Player 1 Username">
+
+        <input type="text" id="p2Name" placeholder="Player 2 Username">
+
+        <select id="difficulty">
+
+            <option value="easy">Easy</option>
+
+            <option value="medium">Medium</option>
+
+            <option value="hard">Hard</option>
+
+        </select>
+
+        <button onclick="startGame()">
+            Start Game
+        </button>
+
+    </div>
+
+</div>
+
+<!-- ================= GAME SCREEN ================= -->
+
+<div class="screen" id="gameScreen">
+
+    <!-- HUD -->
+
+    <div class="topHUD">
+
+        <div class="playerCard p1" id="player1Card">
+            Player 1
+        </div>
+
+        <div class="timer" id="timer">
+            10
+        </div>
+
+        <div class="playerCard p2" id="player2Card">
+            Player 2
+        </div>
+
+    </div>
+
+    <!-- ARENA -->
+
+    <div class="arena">
+
+        <div class="character leftChar">
+            🧒
+        </div>
+
+        <div class="ropeContainer">
+
+            <div class="rope"></div>
+
+            <div class="flag" id="flag"></div>
+
+        </div>
+
+        <div class="character rightChar">
+            👦
+        </div>
+
+        <div class="crowd"></div>
+
+    </div>
+
+    <!-- MATH -->
+
+    <div class="mathBox">
+
+        <div class="question" id="question">
+            5 + 5
+        </div>
+
+        <div class="answerArea">
+
+            <div>
+
+                <input
+                type="number"
+                id="p1Answer"
+                placeholder="Player 1 Answer">
+
+            </div>
+
+            <div>
+
+                <input
+                type="number"
+                id="p2Answer"
+                placeholder="Player 2 Answer">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= WINNER ================= -->
+
+<div id="winnerPopup">
+
+    <div class="popupCard">
+
+        <div class="winText" id="winnerText">
+            Winner
+        </div>
+
+        <button onclick="restartGame()">
+            Play Again
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+/* ================= VARIABLES ================= */
+
+let player1 = "";
+let player2 = "";
+
+let currentAnswer = 0;
+
+let ropePosition = 0;
+
+let timer = 10;
+
+let timerInterval;
+
+let currentTurn = 1;
+
+const flag = document.getElementById("flag");
+
+/* ================= START GAME ================= */
+
+function startGame(){
+
+    player1 =
+        document.getElementById("p1Name").value
+        || "Player 1";
+
+    player2 =
+        document.getElementById("p2Name").value
+        || "Player 2";
+
+    document.getElementById("player1Card")
+    .innerHTML = player1;
+
+    document.getElementById("player2Card")
+    .innerHTML = player2;
+
+    document.getElementById("startScreen")
+    .style.display = "none";
+
+    document.getElementById("gameScreen")
+    .style.display = "flex";
+
+    generateQuestion();
+
+    startTimer();
+
+    focusPlayer();
+}
+
+/* ================= QUESTION ================= */
+
+function generateQuestion(){
+
+    let difficulty =
+        document.getElementById("difficulty").value;
+
+    let num1;
+    let num2;
+
+    if(difficulty === "easy"){
+
+        num1 = rand(1,10);
+        num2 = rand(1,10);
+    }
+
+    else if(difficulty === "medium"){
+
+        num1 = rand(10,50);
+        num2 = rand(10,50);
+    }
+
+    else{
+
+        num1 = rand(50,100);
+        num2 = rand(1,50);
+    }
+
+    const operators = ["+","-","*","/"];
+
+    const op = operators[rand(0,3)];
+
+    if(op === "+"){
+        currentAnswer = num1 + num2;
+    }
+
+    else if(op === "-"){
+        currentAnswer = num1 - num2;
+    }
+
+    else if(op === "*"){
+        currentAnswer = num1 * num2;
+    }
+
+    else{
+
+        currentAnswer = num1;
+
+        num1 = num1 * num2;
+    }
+
+    document.getElementById("question")
+    .innerHTML = `${num1} ${op} ${num2}`;
+
+    document.getElementById("p1Answer").value = "";
+
+    document.getElementById("p2Answer").value = "";
+
+    resetTimer();
+
+    currentTurn = 1;
+
+    focusPlayer();
+}
+
+/* ================= TIMER ================= */
+
+function startTimer(){
+
+    timerInterval = setInterval(()=>{
+
+        timer--;
+
+        document.getElementById("timer")
+        .innerHTML = timer;
+
+        if(timer <= 0){
+
+            generateQuestion();
+        }
+
+    },1000);
+}
+
+function resetTimer(){
+
+    timer = 10;
+
+    document.getElementById("timer")
+    .innerHTML = timer;
+}
+
+/* ================= FOCUS PLAYER ================= */
+
+function focusPlayer(){
+
+    if(currentTurn === 1){
+
+        document.getElementById("p1Answer").focus();
+
+        document.getElementById("p1Answer")
+        .style.border = "4px solid yellow";
+
+        document.getElementById("p2Answer")
+        .style.border = "none";
+    }
+
+    else{
+
+        document.getElementById("p2Answer").focus();
+
+        document.getElementById("p2Answer")
+        .style.border = "4px solid yellow";
+
+        document.getElementById("p1Answer")
+        .style.border = "none";
+    }
+}
+
+/* ================= ENTER EVENTS ================= */
+
+document.getElementById("p1Answer")
+.addEventListener("keydown", function(e){
+
+    if(e.key === "Enter" && currentTurn === 1){
+
+        checkAnswer(1);
+    }
+});
+
+document.getElementById("p2Answer")
+.addEventListener("keydown", function(e){
+
+    if(e.key === "Enter" && currentTurn === 2){
+
+        checkAnswer(2);
+    }
+});
+
+/* ================= CHECK ANSWER ================= */
+
+function checkAnswer(player){
+
+    let value;
+
+    if(player === 1){
+
+        value = Number(
+            document.getElementById("p1Answer").value
+        );
+    }
+
+    else{
+
+        value = Number(
+            document.getElementById("p2Answer").value
+        );
+    }
+
+    if(value === currentAnswer){
+
+        if(player === 1){
+
+            ropePosition--;
+        }
+
+        else{
+
+            ropePosition++;
+        }
+
+        moveRope();
+
+        generateQuestion();
+    }
+
+    if(player === 1){
+
+        currentTurn = 2;
+    }
+
+    else{
+
+        currentTurn = 1;
+    }
+
+    focusPlayer();
+}
+
+/* ================= MOVE ROPE ================= */
+
+function moveRope(){
+
+    let position = 50 + (ropePosition * 8);
+
+    flag.style.left = `${position}%`;
+
+    if(ropePosition <= -5){
+
+        winner(player1);
+    }
+
+    if(ropePosition >= 5){
+
+        winner(player2);
+    }
+}
+
+/* ================= WINNER ================= */
+
+function winner(name){
+
+    clearInterval(timerInterval);
+
+    document.getElementById("winnerPopup")
+    .style.display = "flex";
+
+    document.getElementById("winnerText")
+    .innerHTML = `🏆 ${name} Wins!`;
+
+    confettiExplosion();
+}
+
+/* ================= CONFETTI ================= */
+
+function confettiExplosion(){
+
+    for(let i=0;i<150;i++){
+
+        let confetti =
+            document.createElement("div");
+
+        confetti.classList.add("confetti");
+
+        confetti.style.left =
+            Math.random()*100 + "vw";
+
+        confetti.style.background =
+            `hsl(${Math.random()*360},100%,50%)`;
+
+        confetti.style.animationDuration =
+            (Math.random()*3 + 2) + "s";
+
+        document.body.appendChild(confetti);
+
+        setTimeout(()=>{
+            confetti.remove();
+        },5000);
+    }
+}
+
+/* ================= RESTART ================= */
+
+function restartGame(){
+
+    location.reload();
+}
+
+/* ================= RANDOM ================= */
+
+function rand(min,max){
+
+    return Math.floor(
+        Math.random()*(max-min+1)
+    ) + min;
+}
+
+</script>
+
+</body>
+</html>
