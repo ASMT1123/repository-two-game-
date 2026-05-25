@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Tug Of Math Battle</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+
+/* ================= GLOBAL ================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Fredoka',sans-serif;
+}
+
+body{
+
+    overflow:hidden;
+
+    min-height:100vh;
+
+    background:
+    linear-gradient(
+        135deg,
+        #ff0080,
+        #7928ca,
+        #00c6ff,
+        #00ff88
+    );
+
+    background-size:400% 400%;
+
+    animation:bgMove 12s ease infinite;
+
+    color:white;
+}
+
+@keyframes bgMove{
+
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+/* ================= GLOW ================= */
+
+body::before,
+body::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:350px;
+    height:350px;
+
+    border-radius:50%;
+
+    filter:blur(120px);
+
+    z-index:-1;
+}
+
+body::before{
+
+    background:#ff00cc;
+
+    top:-100px;
+    left:-100px;
+}
+
+body::after{
+
+    background:#00ffee;
+
+    bottom:-100px;
+    right:-100px;
+}
+
+/* ================= SCREEN ================= */
+
+.screen{
+
+    width:100%;
+    height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:20px;
+}
+
+/* ================= START CARD ================= */
+
+.card{
+
+    width:90%;
+    max-width:520px;
+
+    padding:40px;
+
+    border-radius:35px;
+
+    background:rgba(255,255,255,0.12);
+
+    backdrop-filter:blur(18px);
+
+    border:2px solid rgba(255,255,255,0.2);
+
+    text-align:center;
+
+    box-shadow:
+    0 0 35px rgba(255,255,255,0.2);
+}
+
+h1{
+
+    font-size:3rem;
+
+    margin-bottom:25px;
+
+    background:
+    linear-gradient(
+        to right,
+        #fff700,
+        #ff00ea,
+        #00f7ff
+    );
+
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:transparent;
+}
+
+input{
+
+    width:100%;
+
+    padding:18px;
+
+    margin:15px 0;
+
+    border:none;
+
+    border-radius:18px;
+
+    font-size:1rem;
+
+    background:rgba(255,255,255,0.2);
+
+    color:white;
+}
+
+input::placeholder{
+    color:white;
+}
+
+button{
+
+    padding:18px 35px;
+
+    border:none;
+
+    border-radius:18px;
+
+    font-size:1.1rem;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        45deg,
+        #ff512f,
+        #dd2476,
+        #6a11cb,
+        #2575fc
+    );
+
+    background-size:300% 300%;
+
+    animation:buttonMove 5s infinite;
+}
+
+@keyframes buttonMove{
+
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+/* ================= GAME ================= */
+
+#gameScreen{
+
+    display:none;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:20px;
+}
+
+/* ================= HUD ================= */
+
+.topHUD{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+}
+
+.playerCard{
+
+    flex:1;
+
+    padding:16px;
+
+    border-radius:22px;
+
+    text-align:center;
+
+    font-size:1.2rem;
+
+    font-weight:bold;
+
+    transition:0.3s;
+}
+
+.activeTurn{
+
+    background:
+    linear-gradient(
+        135deg,
+        #00ff88,
+        #00c853
+    );
+
+    box-shadow:
+    0 0 20px #00ff88;
+}
+
+.waitingTurn{
+
+    background:
+    linear-gradient(
+        135deg,
+        #ff5252,
+        #d50000
+    );
+
+    opacity:0.8;
+}
+
+/* ================= TIMER ================= */
+
+.timer{
+
+    font-size:2rem;
+
+    background:
+    linear-gradient(
+        135deg,
+        #fff700,
+        #ff8800
+    );
+
+    color:black;
+
+    padding:14px 28px;
+
+    border-radius:20px;
+
+    font-weight:bold;
+
+    animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+
+    0%{transform:scale(1);}
+    50%{transform:scale(1.08);}
+    100%{transform:scale(1);}
+}
+
+/* ================= ARENA ================= */
+
+.arena{
+
+    width:100%;
+
+    height:330px;
+
+    position:relative;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+}
+
+/* ================= ROPE ================= */
+
+.ropeContainer{
+
+    position:relative;
+
+    width:70%;
+
+    height:16px;
+
+    border-radius:20px;
+}
+
+.rope{
+
+    position:absolute;
+
+    width:100%;
+    height:100%;
+
+    border-radius:20px;
+
+    background:
+    repeating-linear-gradient(
+        45deg,
+        #6f4518 0px,
+        #6f4518 10px,
+        #bc8a5f 10px,
+        #bc8a5f 20px
+    );
+}
+
+.flag{
+
+    position:absolute;
+
+    width:28px;
+    height:60px;
+
+    left:50%;
+    top:-24px;
+
+    transform:translateX(-50%);
+
+    border-radius:5px;
+
+    background:
+    linear-gradient(
+        180deg,
+        #fff700,
+        #ff9900
+    );
+
+    box-shadow:
+    0 0 20px #fff700;
+
+    transition:0.4s ease;
+}
+
+/* ================= CHARACTERS ================= */
+
+.character{
+
+    position:absolute;
+
+    width:90px;
+    height:120px;
+
+    bottom:82px;
+
+    transition:0.3s;
+}
+
+/* PLAYER POSITIONS */
+
+.leftChar{
+    left:10%;
+}
+
+.rightChar{
+    right:10%;
+}
+
+/* HEAD */
+
+.head{
+
+    position:absolute;
+
+    width:48px;
+    height:48px;
+
+    background:#ffd6a5;
+
+    border-radius:50%;
+
+    left:20px;
+
+    top:0;
+
+    z-index:3;
+}
+
+/* HAT */
+
+.hat{
+
+    position:absolute;
+
+    width:56px;
+    height:18px;
+
+    background:red;
+
+    border-radius:30px 30px 10px 10px;
+
+    left:-4px;
+
+    top:-6px;
+}
+
+/* EYES */
+
+.eye{
+
+    position:absolute;
+
+    width:6px;
+    height:10px;
+
+    background:black;
+
+    border-radius:50%;
+}
+
+.eye1{
+    top:18px;
+    left:12px;
+}
+
+.eye2{
+    top:18px;
+    right:12px;
+}
+
+/* MUSTACHE */
+
+.mustache{
+
+    position:absolute;
+
+    width:24px;
+    height:6px;
+
+    background:black;
+
+    border-radius:20px;
+
+    left:12px;
+    top:32px;
+}
+
+/* BODY */
+
+.bodyPart{
+
+    position:absolute;
+
+    width:60px;
+    height:52px;
+
+    border-radius:16px;
+
+    left:15px;
+    top:45px;
+}
+
+/* ARMS */
+
+.arm{
+
+    position:absolute;
+
+    width:12px;
+    height:45px;
+
+    background:#ffd6a5;
+
+    border-radius:20px;
+
+    top:48px;
+
+    transform-origin:top center;
+}
+
+.leftArm{
+    left:3px;
+}
+
+.rightArm{
+    right:3px;
+}
+
+/* LEGS */
+
+.leg{
+
+    position:absolute;
+
+    width:12px;
+    height:36px;
+
+    background:#5d4037;
+
+    border-radius:20px;
+
+    top:86px;
+}
+
+.leg1{
+    left:28px;
+}
+
+.leg2{
+    right:28px;
+}
+
+/* COLORS */
+
+.player1 .bodyPart{
+    background:#1976d2;
+}
+
+.player2 .bodyPart{
+    background:#ff416c;
+}
+
+.player2 .hat{
+    background:#00c6ff;
+}
+
+/* ================= IDLE ================= */
+
+.idle{
+    animation:idleBounce 1s infinite alternate;
+}
+
+@keyframes idleBounce{
+
+    from{
+        transform:translateY(0px);
+    }
+
+    to{
+        transform:translateY(-5px);
+    }
+}
+
+/* ================= PULL ANIMATION ================= */
+
+.pullLeft{
+
+    animation:pullBodyLeft 0.45s ease;
+}
+
+.pullRight{
+
+    animation:pullBodyRight 0.45s ease;
+}
+
+.pullLeft .rightArm{
+
+    animation:pullArmLeft 0.45s ease;
+}
+
+.pullRight .leftArm{
+
+    animation:pullArmRight 0.45s ease;
+}
+
+@keyframes pullBodyLeft{
+
+    0%{
+        transform:translateX(0);
+    }
+
+    50%{
+        transform:
+        translateX(20px)
+        rotate(10deg)
+        scale(1.05);
+    }
+
+    100%{
+        transform:translateX(0);
+    }
+}
+
+@keyframes pullBodyRight{
+
+    0%{
+        transform:translateX(0);
+    }
+
+    50%{
+        transform:
+        translateX(-20px)
+        rotate(-10deg)
+        scale(1.05);
+    }
+
+    100%{
+        transform:translateX(0);
+    }
+}
+
+@keyframes pullArmLeft{
+
+    0%{
+        transform:rotate(0deg);
+    }
+
+    50%{
+        transform:rotate(-75deg);
+    }
+
+    100%{
+        transform:rotate(0deg);
+    }
+}
+
+@keyframes pullArmRight{
+
+    0%{
+        transform:rotate(0deg);
+    }
+
+    50%{
+        transform:rotate(75deg);
+    }
+
+    100%{
+        transform:rotate(0deg);
+    }
+}
+
+/* ================= FAIL ================= */
+
+.fail{
+    animation:failAnim 0.5s ease;
+}
+
+@keyframes failAnim{
+
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-8px);}
+    50%{transform:translateX(8px);}
+    75%{transform:translateX(-8px);}
+    100%{transform:translateX(0);}
+}
+
+/* ================= CROWD ================= */
+
+.crowd{
+
+    position:absolute;
+
+    bottom:0;
+
+    width:100%;
+
+    height:80px;
+
+    background:
+    repeating-linear-gradient(
+        90deg,
+        #111 0px,
+        #111 20px,
+        #444 20px,
+        #444 40px
+    );
+
+    animation:crowdMove 0.5s infinite alternate;
+}
+
+@keyframes crowdMove{
+
+    from{
+        transform:translateY(0px);
+    }
+
+    to{
+        transform:translateY(5px);
+    }
+}
+
+/* ================= MATH ================= */
+
+.mathBox{
+
+    width:95%;
+    max-width:720px;
+
+    padding:35px;
+
+    border-radius:35px;
+
+    background:rgba(255,255,255,0.15);
+
+    backdrop-filter:blur(15px);
+
+    text-align:center;
+}
+
+.question{
+
+    font-size:3rem;
+
+    margin-bottom:25px;
+
+    font-weight:bold;
+
+    text-shadow:
+    0 0 10px white,
+    0 0 20px #00f7ff;
+}
+
+.answerArea{
+
+    display:flex;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+
+    justify-content:center;
+}
+
+.answerArea div{
+
+    flex:1;
+
+    min-width:220px;
+}
+
+/* ================= WINNER ================= */
+
+#winnerPopup{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,0.8);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:999;
+}
+
+.popupCard{
+
+    width:90%;
+    max-width:500px;
+
+    padding:50px;
+
+    border-radius:35px;
+
+    text-align:center;
+
+    background:
+    linear-gradient(
+        135deg,
+        #ff00cc,
+        #3333ff,
+        #00ffee
+    );
+}
+
+.winText{
+
+    font-size:3rem;
+
+    margin-bottom:20px;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:768px){
+
+    .topHUD{
+        flex-direction:column;
+    }
+
+    .question{
+        font-size:2rem;
+    }
+
+    .character{
+        transform:scale(0.85);
+    }
+
+    .leftChar{
+        left:2%;
+    }
+
+    .rightChar{
+        right:2%;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- ================= START SCREEN ================= -->
+
+<div class="screen"
+id="startScreen">
+
+    <div class="card">
+
+        <h1>🪢 Tug Of Math ⚔️</h1>
+
+        <input
+        type="text"
+        id="p1Name"
+        placeholder="Player 1 Username">
+
+        <input
+        type="text"
+        id="p2Name"
+        placeholder="Player 2 Username">
+
+        <button onclick="startGame()">
+
+            Start Battle
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- ================= GAME SCREEN ================= -->
+
+<div class="screen"
+id="gameScreen">
+
+    <!-- HUD -->
+
+    <div class="topHUD">
+
+        <div class="playerCard"
+        id="player1Card">
+
+            Player 1
+
+        </div>
+
+        <div class="timer"
+        id="timer">
+
+            10
+
+        </div>
+
+        <div class="playerCard"
+        id="player2Card">
+
+            Player 2
+
+        </div>
+
+    </div>
+
+    <!-- ARENA -->
+
+    <div class="arena">
+
+        <!-- LEFT PLAYER -->
+
+        <div class="character player1 idle leftChar"
+        id="leftPlayer">
+
+            <div class="head">
+
+                <div class="hat"></div>
+
+                <div class="eye eye1"></div>
+
+                <div class="eye eye2"></div>
+
+                <div class="mustache"></div>
+
+            </div>
+
+            <div class="bodyPart"></div>
+
+            <div class="arm leftArm"></div>
+
+            <div class="arm rightArm"></div>
+
+            <div class="leg leg1"></div>
+
+            <div class="leg leg2"></div>
+
+        </div>
+
+        <!-- ROPE -->
+
+        <div class="ropeContainer">
+
+            <div class="rope"></div>
+
+            <div class="flag"
+            id="flag"></div>
+
+        </div>
+
+        <!-- RIGHT PLAYER -->
+
+        <div class="character player2 idle rightChar"
+        id="rightPlayer">
+
+            <div class="head">
+
+                <div class="hat"></div>
+
+                <div class="eye eye1"></div>
+
+                <div class="eye eye2"></div>
+
+                <div class="mustache"></div>
+
+            </div>
+
+            <div class="bodyPart"></div>
+
+            <div class="arm leftArm"></div>
+
+            <div class="arm rightArm"></div>
+
+            <div class="leg leg1"></div>
+
+            <div class="leg leg2"></div>
+
+        </div>
+
+        <div class="crowd"></div>
+
+    </div>
+
+    <!-- MATH -->
+
+    <div class="mathBox">
+
+        <div class="question"
+        id="question">
+
+            5 + 5
+
+        </div>
+
+        <div class="answerArea">
+
+            <div>
+
+                <input
+                type="number"
+                id="p1Answer"
+                placeholder="Player 1 Answer">
+
+            </div>
+
+            <div>
+
+                <input
+                type="number"
+                id="p2Answer"
+                placeholder="Player 2 Answer">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= WINNER ================= -->
+
+<div id="winnerPopup">
+
+    <div class="popupCard">
+
+        <div class="winText"
+        id="winnerText">
+
+            Winner
+
+        </div>
+
+        <button onclick="restartGame()">
+
+            Play Again
+
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+/* ================= VARIABLES ================= */
+
+let player1 = "";
+let player2 = "";
+
+let currentAnswer = 0;
+
+let ropePosition = 0;
+
+let timer = 10;
+
+let timerInterval;
+
+let currentTurn = 1;
+
+const flag =
+document.getElementById("flag");
+
+/* ================= START GAME ================= */
+
+function startGame(){
+
+    player1 =
+    document.getElementById("p1Name").value
+    || "Player 1";
+
+    player2 =
+    document.getElementById("p2Name").value
+    || "Player 2";
+
+    document.getElementById("startScreen")
+    .style.display = "none";
+
+    document.getElementById("gameScreen")
+    .style.display = "flex";
+
+    generateQuestion();
+
+    startTimer();
+
+    updateTurnUI();
+}
+
+/* ================= QUESTION ================= */
+
+function generateQuestion(){
+
+    let num1 =
+    rand(1,20);
+
+    let num2 =
+    rand(1,20);
+
+    const operators =
+    ["+","-","*"];
+
+    const op =
+    operators[rand(0,2)];
+
+    if(op === "+"){
+
+        currentAnswer =
+        num1 + num2;
+    }
+
+    else if(op === "-"){
+
+        currentAnswer =
+        num1 - num2;
+    }
+
+    else{
+
+        currentAnswer =
+        num1 * num2;
+    }
+
+    document.getElementById("question")
+    .innerHTML =
+    `${num1} ${op} ${num2}`;
+
+    document.getElementById("p1Answer")
+    .value = "";
+
+    document.getElementById("p2Answer")
+    .value = "";
+
+    resetTimer();
+}
+
+/* ================= TIMER ================= */
+
+function startTimer(){
+
+    clearInterval(timerInterval);
+
+    timerInterval =
+    setInterval(()=>{
+
+        timer--;
+
+        document.getElementById("timer")
+        .innerHTML = timer;
+
+        if(timer <= 0){
+
+            currentTurn =
+            currentTurn === 1 ? 2 : 1;
+
+            updateTurnUI();
+
+            generateQuestion();
+        }
+
+    },1000);
+}
+
+function resetTimer(){
+
+    timer = 10;
+
+    document.getElementById("timer")
+    .innerHTML = timer;
+}
+
+/* ================= TURN UI ================= */
+
+function updateTurnUI(){
+
+    const p1 =
+    document.getElementById("player1Card");
+
+    const p2 =
+    document.getElementById("player2Card");
+
+    p1.classList.remove(
+    "activeTurn",
+    "waitingTurn"
+    );
+
+    p2.classList.remove(
+    "activeTurn",
+    "waitingTurn"
+    );
+
+    if(currentTurn === 1){
+
+        p1.classList.add("activeTurn");
+
+        p2.classList.add("waitingTurn");
+
+        p1.innerHTML =
+        `🟢 ${player1}`;
+
+        p2.innerHTML =
+        `🔴 ${player2}`;
+
+        document.getElementById("p1Answer")
+        .focus();
+    }
+
+    else{
+
+        p2.classList.add("activeTurn");
+
+        p1.classList.add("waitingTurn");
+
+        p2.innerHTML =
+        `🟢 ${player2}`;
+
+        p1.innerHTML =
+        `🔴 ${player1}`;
+
+        document.getElementById("p2Answer")
+        .focus();
+    }
+}
+
+/* ================= EVENTS ================= */
+
+document.getElementById("p1Answer")
+.addEventListener("keydown",function(e){
+
+    if(e.key === "Enter"
+    && currentTurn === 1){
+
+        checkAnswer(1);
+    }
+});
+
+document.getElementById("p2Answer")
+.addEventListener("keydown",function(e){
+
+    if(e.key === "Enter"
+    && currentTurn === 2){
+
+        checkAnswer(2);
+    }
+});
+
+/* ================= CHECK ANSWER ================= */
+
+function checkAnswer(player){
+
+    let value;
+
+    if(player === 1){
+
+        value =
+        Number(
+        document.getElementById("p1Answer")
+        .value
+        );
+    }
+
+    else{
+
+        value =
+        Number(
+        document.getElementById("p2Answer")
+        .value
+        );
+    }
+
+    /* CORRECT */
+
+    if(value === currentAnswer){
+
+        animatePull(player);
+
+        if(player === 1){
+
+            ropePosition--;
+        }
+
+        else{
+
+            ropePosition++;
+        }
+
+        moveRope();
+    }
+
+    /* WRONG */
+
+    else{
+
+        animateFail(player);
+    }
+
+    /* SWITCH TURN */
+
+    currentTurn =
+    player === 1 ? 2 : 1;
+
+    updateTurnUI();
+
+    generateQuestion();
+}
+
+/* ================= PULL ================= */
+
+function animatePull(player){
+
+    let char;
+
+    if(player === 1){
+
+        char =
+        document.getElementById("leftPlayer");
+
+        char.classList.add("pullLeft");
+    }
+
+    else{
+
+        char =
+        document.getElementById("rightPlayer");
+
+        char.classList.add("pullRight");
+    }
+
+    setTimeout(()=>{
+
+        char.classList.remove(
+        "pullLeft",
+        "pullRight"
+        );
+
+    },450);
+}
+
+/* ================= FAIL ================= */
+
+function animateFail(player){
+
+    let char;
+
+    if(player === 1){
+
+        char =
+        document.getElementById("leftPlayer");
+    }
+
+    else{
+
+        char =
+        document.getElementById("rightPlayer");
+    }
+
+    char.classList.add("fail");
+
+    setTimeout(()=>{
+
+        char.classList.remove("fail");
+
+    },500);
+}
+
+/* ================= MOVE ROPE ================= */
+
+function moveRope(){
+
+    let position =
+    Math.max(
+        10,
+        Math.min(
+            90,
+            50 + (ropePosition * 8)
+        )
+    );
+
+    flag.style.left =
+    `${position}%`;
+
+    if(ropePosition <= -5){
+
+        winner(player1);
+    }
+
+    if(ropePosition >= 5){
+
+        winner(player2);
+    }
+}
+
+/* ================= WINNER ================= */
+
+function winner(name){
+
+    clearInterval(timerInterval);
+
+    document.getElementById("winnerPopup")
+    .style.display = "flex";
+
+    document.getElementById("winnerText")
+    .innerHTML =
+    `🏆 ${name} Wins!`;
+}
+
+/* ================= RESTART ================= */
+
+function restartGame(){
+
+    location.reload();
+}
+
+/* ================= RANDOM ================= */
+
+function rand(min,max){
+
+    return Math.floor(
+        Math.random()*(max-min+1)
+    ) + min;
+}
+
+</script>
+
+</body>
+</html>
